@@ -3,7 +3,7 @@ from scipy.special import softmax
 
 import models.decision_tree as dt
 
-def gradient_training(df, labels, column, criterion, max_depth, min_sample_split, max_features, learning_rate, n_estimators):
+def gradient_training(df, labels, column, max_depth, min_sample_split, max_features, learning_rate, n_estimators):
     # Train gradient boosting ensemble for multi-class classification
 
     logits = np.zeros((labels.shape[0], labels.shape[1]), dtype=float)  # raw scores for each class
@@ -21,7 +21,7 @@ def gradient_training(df, labels, column, criterion, max_depth, min_sample_split
             df_copy = df.copy()
             df_copy[column] = residuals
             # Fit decision tree to residuals
-            tree = dt.decision_tree(df_copy, column, criterion, 0, max_depth, min_sample_split, max_features)
+            tree = dt.decision_tree(df_copy, column, 0, max_depth, min_sample_split, max_features)
             curr_tree_predictions = dt.predict(tree, df_copy)  
 
             # Update logits

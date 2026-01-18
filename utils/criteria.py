@@ -10,19 +10,8 @@ def get_split_info(node):
     # Extract splitting feature and threshold from decision node
     return node["feature"], node["threshold"]
 
-def weighted_mse(left_df, right_df, column):
-    # Compute weighted Mean Squared Error for regression splits
-    left_mse = np.var(left_df[column]) * len(left_df)
-    right_mse = np.var(right_df[column]) * len(right_df)
-    total = len(left_df) + len(right_df)
-
-    return (left_mse + right_mse) / total
-
 def gini_impurity(df, column):
     # Compute Gini impurity for classification labels
-
-    if df is None:
-        raise ValueError("Input DataFrame (df) must not be None.")
     
     unique = df[column].unique()
     probabilities = [(np.sum(df[column] == int(value)) / len(df)) for value in unique]
@@ -32,25 +21,11 @@ def gini_impurity(df, column):
 def weighted_gini(df_under, df_over, column):
     # Compute weighted Gini impurity for a split
 
-    if df_under is None:
-        raise ValueError("Input DataFrame 'df_under' must not be None.")
-
-    if df_over is None:
-        raise ValueError("Input DataFrame 'df_over' must not be None.")
-
     tot = len(df_under) + len(df_over)
     return (len(df_under) / tot) * gini_impurity(df_under, column) + (len(df_over) / tot) * gini_impurity(df_over, column)
 
-CRITERIA = {
-    "gini": weighted_gini,
-    "mse": weighted_mse
-}
-
-def best_split(df, features, column, criterion):
-    # Find the best feature and threshold minimizing the chosen split criterion
-    
-    if df is None:
-        raise ValueError("Input DataFrame (df) must not be None.")
+def best_split(df, features, column):
+    # Find the best feature and threshold minimizing the chosen gini impurity
     
     if features is None or len(features) == 0:
         features = [col for col in df.columns if col != column]
@@ -74,7 +49,7 @@ def best_split(df, features, column, criterion):
                 if len(df_under) == 0 or len(df_over) == 0:
                     continue
                 
-                score = criterion(df_under, df_over, column)
+                score = weighted_gini(df_under, df_over, column)
                 
                 # Keep best split found so far
                 if score < best_score:
