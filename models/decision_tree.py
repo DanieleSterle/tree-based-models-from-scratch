@@ -20,13 +20,10 @@ def decision_tree(df, column, depth, max_depth, min_sample_split, max_features=N
     columns.remove(column)
     random_features = None
 
+    # If max_features is specified, randomly select that many numeric features
     if max_features is not None:
         numeric_columns = [col for col in columns if pd.api.types.is_numeric_dtype(df[col])]
-
-        if len(numeric_columns) <= max_features:
-            random_features = numeric_columns
-        else:
-            random_features = rd.sample(numeric_columns, min(max_features, len(numeric_columns)))
+        random_features = rd.sample(numeric_columns, min(max_features, len(numeric_columns)))
     else:
         random_features = [col for col in columns if pd.api.types.is_numeric_dtype(df[col])]
 
