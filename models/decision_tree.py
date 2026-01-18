@@ -21,10 +21,25 @@ def decision_tree(df, column, depth, max_depth, min_sample_split, max_features=N
     random_features = None
 
     if max_features is not None:
-        random_features = rd.sample(columns,  min(max_features, len(columns)))
+        numeric_columns = [col for col in columns if pd.api.types.is_numeric_dtype(df[col])]
+
+        if len(numeric_columns) <= max_features:
+            random_features = numeric_columns
+        else:
+            random_features = rd.sample(numeric_columns, min(max_features, len(numeric_columns)))
+    else:
+        random_features = [col for col in columns if pd.api.types.is_numeric_dtype(df[col])]
 
     # Find best feature and threshold for the split
     best_feature, best_threshold = criteria.best_split(df, random_features, column)
+    
+    # If no valid split found, create leaf node
+    if best_feature is None:
+        majority_class = df[column].mode()[0]
+        return {
+            "type": "leaf",
+            "prediction": majority_class
+        }
     
     # Split data into left and right branches
     df_under = df[df[best_feature] <= best_threshold]

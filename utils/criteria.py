@@ -26,36 +26,32 @@ def weighted_gini(df_under, df_over, column):
 
 def best_split(df, features, column):
     # Find the best feature and threshold minimizing the chosen gini impurity
-    
-    if features is None or len(features) == 0:
-        features = [col for col in df.columns if col != column]
 
     best_feature = None
     best_threshold = None
     best_score = float("inf")
     
     for col in df[features].columns:
-        if is_numeric_dtype(df[col]):
-            unique = np.sort(df[col].unique())
+        unique = np.sort(df[col].unique())
+        
+        # Candidate thresholds are midpoints between consecutive values
+        thresholds = [((unique[i] + unique[i + 1]) / 2) for i in range(len(unique) - 1)]
+        
+        for threshold in thresholds:
+            df_under = df[df[col] <= threshold]
+            df_over = df[df[col] > threshold]
             
-            # Candidate thresholds are midpoints between consecutive values
-            thresholds = [((unique[i] + unique[i + 1]) / 2) for i in range(len(unique) - 1)]
+            # Skip invalid splits
+            if len(df_under) == 0 or len(df_over) == 0:
+                continue
             
-            for threshold in thresholds:
-                df_under = df[df[col] <= threshold]
-                df_over = df[df[col] > threshold]
-                
-                # Skip invalid splits
-                if len(df_under) == 0 or len(df_over) == 0:
-                    continue
-                
-                score = weighted_gini(df_under, df_over, column)
-                
-                # Keep best split found so far
-                if score < best_score:
-                    best_score = score
-                    best_feature = col
-                    best_threshold = threshold
+            score = weighted_gini(df_under, df_over, column)
+            
+            # Keep best split found so far
+            if score < best_score:
+                best_score = score
+                best_feature = col
+                best_threshold = threshold
     
     print(f"Best split: Feature = {best_feature}, Threshold = {best_threshold}, Score = {best_score}")
     return best_feature, best_threshold

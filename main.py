@@ -34,8 +34,7 @@ if __name__ == "__main__":
         predictions = dt.predict(tree, test_df)
 
         # Compute accuracy & Detailed evaluation
-        correct = sum(1 for true, pred in zip(test_df[column], predictions) if true == pred)
-        accuracy = correct / len(test_df)
+        accuracy = np.mean(predictions == test_df[column].values)
         print(f"Test Accuracy: {accuracy:.2f}")
         print(classification_report(test_df[column], predictions, zero_division=0))
 
@@ -47,7 +46,9 @@ if __name__ == "__main__":
         # Train Random Forest and predict
         predictions = rf.random_forest(train_df, test_df, column, n_trees, max_depth, min_samples_split, max_features)
 
-        # Model evaluation
+        # Compute accuracy & Detailed evaluation
+        accuracy = np.mean(predictions == test_df[column].values)
+        print(f"Test Accuracy: {accuracy:.2f}")
         print(classification_report(test_df[column], predictions, zero_division=0))
 
     if model == "gradient_boosting":
