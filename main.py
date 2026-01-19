@@ -60,7 +60,7 @@ if __name__ == "__main__":
         train_labels = data.one_hot_encode(train_df[column])
 
         # Train gradient boosting model
-        trees, learning_rate = gb.gradient_training(
+        trees = gb.gradient_training(
             train_df, train_labels, column,
             max_depth, min_samples_split,
             max_features, learning_rate, n_estimators

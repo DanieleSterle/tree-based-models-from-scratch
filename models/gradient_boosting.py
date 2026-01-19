@@ -30,7 +30,7 @@ def gradient_training(df, labels, column, max_depth, min_sample_split, max_featu
 
         trees.append(class_trees)
 
-    return trees, learning_rate
+    return trees
 
 def gradient_predict(df, trees, learning_rate):
     # Predict class probabilities using trained gradient boosting ensemble
