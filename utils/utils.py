@@ -7,8 +7,8 @@ def get_argv():
 
     # Common arguments shared by all models
     def add_common_args(p):
-        p.add_argument("-f", dest="file_path", required=True, help="Path to .csv file")
-        p.add_argument("-c", dest="column", required=True, help="Target column")
+        p.add_argument("-f", "--file_path", dest="file_path", required=True, help="Path to .csv file")
+        p.add_argument("-c", "--column", dest="column", required=True, help="Target column")
         p.add_argument("-r", "--ratio", dest="ratio", required=True, type=float, help="Train/test split ratio")
 
     # ---------------- Decision Tree ----------------
@@ -34,21 +34,4 @@ def get_argv():
     gb_parser.add_argument("-ne", "--n_estimators", dest="n_estimators", required=True, type=int, help="Number of estimators")
     gb_parser.add_argument("-lr", "--learning_rate", dest="learning_rate", required=True, type=float, help="Learning rate")
 
-    args = parser.parse_args()
-
-    # Extract only arguments relevant to the selected model
-    model = args.model if hasattr(args, "model") else None
-    file_path = args.file_path if hasattr(args, "file_path") else None
-    column = args.column if hasattr(args, "column") else None
-    ratio = args.ratio if hasattr(args, "ratio") else None
-
-    max_depth = args.max_depth if hasattr(args, "max_depth") else None
-    min_samples_split = args.min_samples_split if hasattr(args, "min_samples_split") else None
-
-    n_trees = args.n_trees if hasattr(args, "n_trees") else None
-    max_features = args.max_features if hasattr(args, "max_features") else None
-
-    learning_rate = args.learning_rate if hasattr(args, "learning_rate") else None
-    n_estimators = args.n_estimators if hasattr(args, "n_estimators") else None
-
-    return model, file_path, column, ratio, max_depth, min_samples_split, max_features, n_trees, n_estimators, learning_rate
+    return parser.parse_args()
